@@ -34,6 +34,8 @@ cc_library(
   SOURCES
     async_testing.cc
     async_testing.h
+    debugger.cc
+    debugger.h
     equals_tester.h
     filesystem_testing.cc
     filesystem_testing.h
