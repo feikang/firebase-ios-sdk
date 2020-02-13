@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -169,6 +170,8 @@ TEST(FieldPath, IsPrefixOf) {
 }
 
 TEST(FieldPath, AccessFailures) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   const FieldPath path;
   ASSERT_ANY_THROW(path.first_segment());
   ASSERT_ANY_THROW(path.last_segment());
@@ -220,6 +223,8 @@ TEST(FieldPath, ParseEmbeddedNull) {
 }
 
 TEST(FieldPath, ParseFailures) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   ASSERT_ANY_THROW(FieldPath::FromServerFormat(""));
   ASSERT_ANY_THROW(FieldPath::FromServerFormat("."));
   ASSERT_ANY_THROW(FieldPath::FromServerFormat(".."));

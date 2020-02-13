@@ -20,6 +20,7 @@
 #include <numeric>
 #include <random>
 
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "Firestore/core/src/firebase/firestore/util/secure_random.h"
 
 #include "Firestore/core/test/firebase/firestore/immutable/testing.h"
@@ -34,6 +35,8 @@ using IntMap = ArraySortedMap<int, int>;
 constexpr IntMap::size_type kFixedSize = IntMap::kFixedSize;
 
 TEST(ArraySortedMap, ChecksSize) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   std::vector<int> to_insert = Sequence(kFixedSize);
   IntMap map = ToMap<IntMap>(to_insert);
 

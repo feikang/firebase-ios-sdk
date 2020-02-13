@@ -17,6 +17,7 @@
 #include <exception>
 
 #include "Firestore/core/src/firebase/firestore/util/hard_assert.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -38,12 +39,14 @@ void AssertWithMessage(bool condition) {
 TEST(HardAssertTest, Vanilla) {
   Assert(true);
 
+  testutil::RestoreDefaultThrowHandler restore;
   EXPECT_ANY_THROW(Assert(false));
 }
 
 TEST(HardAssertTest, WithMessage) {
   AssertWithMessage(true);
 
+  testutil::RestoreDefaultThrowHandler restore;
   EXPECT_ANY_THROW(AssertWithMessage(false));
 }
 

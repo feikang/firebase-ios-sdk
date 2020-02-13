@@ -16,6 +16,7 @@
 
 #include "Firestore/core/src/firebase/firestore/auth/token.h"
 
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -29,6 +30,8 @@ TEST(Token, Getter) {
 }
 
 TEST(Token, UnauthenticatedToken) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   const Token& token = Token::Unauthenticated();
   EXPECT_ANY_THROW(token.token());
   EXPECT_EQ(User::Unauthenticated(), token.user());

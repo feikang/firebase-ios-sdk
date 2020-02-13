@@ -34,7 +34,9 @@
 #include "Firestore/core/src/firebase/firestore/model/precondition.h"
 #include "Firestore/core/src/firebase/firestore/model/set_mutation.h"
 #include "Firestore/core/src/firebase/firestore/model/transform_mutation.h"
+#include "Firestore/core/src/firebase/firestore/util/exception.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "Firestore/core/test/firebase/firestore/testutil/testutil.h"
 
 namespace testutil = firebase::firestore::testutil;
@@ -169,5 +171,15 @@ TransformMutation FSTTestTransformMutation(NSString *path, NSDictionary<NSString
 DeleteMutation FSTTestDeleteMutation(NSString *path) {
   return DeleteMutation(FSTTestDocKey(path), Precondition::None());
 }
+
+@implementation FSTDebugThrowHandlerHelper
+
++ (void)initialize {
+  util::SetThrowHandler(testutil::DebugThrowHandler);
+}
+
+@end
+
+static const FSTDebugThrowHandlerHelper* _ = [[FSTDebugThrowHandlerHelper alloc] init];
 
 NS_ASSUME_NONNULL_END

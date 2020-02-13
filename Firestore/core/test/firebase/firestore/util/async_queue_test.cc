@@ -21,6 +21,7 @@
 #include <string>
 
 #include "Firestore/core/src/firebase/firestore/util/executor.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "absl/memory/memory.h"
 #include "gtest/gtest.h"
 
@@ -51,6 +52,8 @@ TEST_P(AsyncQueueTest, Enqueue) {
 }
 
 TEST_P(AsyncQueueTest, EnqueueDisallowsNesting) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   Expectation ran;
   // clang-format off
   queue->Enqueue([&] {
@@ -80,6 +83,8 @@ TEST_P(AsyncQueueTest, EnqueueBlocking) {
 }
 
 TEST_P(AsyncQueueTest, EnqueueBlockingDisallowsNesting) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   // clang-format off
   queue->EnqueueBlocking([&] {
     EXPECT_ANY_THROW(queue->EnqueueBlocking([] {}););
@@ -88,6 +93,8 @@ TEST_P(AsyncQueueTest, EnqueueBlockingDisallowsNesting) {
 }
 
 TEST_P(AsyncQueueTest, ExecuteBlockingDisallowsNesting) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   queue->EnqueueBlocking(
       [&] { EXPECT_ANY_THROW(queue->ExecuteBlocking([] {});); });
 }

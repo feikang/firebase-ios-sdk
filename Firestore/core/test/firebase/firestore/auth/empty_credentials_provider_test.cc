@@ -17,6 +17,7 @@
 #include "Firestore/core/src/firebase/firestore/auth/empty_credentials_provider.h"
 
 #include "Firestore/core/src/firebase/firestore/util/statusor.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -24,6 +25,8 @@ namespace firestore {
 namespace auth {
 
 TEST(EmptyCredentialsProvider, GetToken) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   EmptyCredentialsProvider credentials_provider;
   credentials_provider.GetToken([](util::StatusOr<Token> result) {
     EXPECT_TRUE(result.ok());

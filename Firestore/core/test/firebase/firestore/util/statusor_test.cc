@@ -17,6 +17,7 @@
 // Unit tests for StatusOr
 
 #include "Firestore/core/src/firebase/firestore/util/statusor.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -221,6 +222,8 @@ TEST(StatusOr, TestDefaultCtor) {
 }
 
 TEST(StatusOrDeathTest, TestDefaultCtorValue) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   StatusOr<int> thing;
   EXPECT_ANY_THROW(thing.ValueOrDie());
 
@@ -315,11 +318,15 @@ TEST(StatusOr, TestValueConst) {
 }
 
 TEST(StatusOrDeathTest, TestValueNotOk) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   StatusOr<int> thing(Status(Error::Cancelled, "cancelled"));
   EXPECT_ANY_THROW(thing.ValueOrDie());
 }
 
 TEST(StatusOrDeathTest, TestValueNotOkConst) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   const StatusOr<int> thing(Status(Error::Unknown, ""));
   EXPECT_ANY_THROW(thing.ValueOrDie());
 }
@@ -331,6 +338,8 @@ TEST(StatusOr, TestPointerDefaultCtor) {
 }
 
 TEST(StatusOrDeathTest, TestPointerDefaultCtorValue) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   StatusOr<int*> thing;
   EXPECT_ANY_THROW(thing.ValueOrDie());
 }
@@ -424,11 +433,15 @@ TEST(StatusOr, TestPointerValueConst) {
 // }
 
 TEST(StatusOrDeathTest, TestPointerValueNotOk) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   StatusOr<int*> thing(Status(Error::Cancelled, "cancelled"));
   EXPECT_ANY_THROW(thing.ValueOrDie());
 }
 
 TEST(StatusOrDeathTest, TestPointerValueNotOkConst) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   const StatusOr<int*> thing(Status(Error::Cancelled, "cancelled"));
   EXPECT_ANY_THROW(thing.ValueOrDie());
 }

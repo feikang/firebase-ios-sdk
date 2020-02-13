@@ -26,6 +26,7 @@
 #include "Firestore/core/src/firebase/firestore/remote/stream.h"
 #include "Firestore/core/src/firebase/firestore/util/async_queue.h"
 #include "Firestore/core/test/firebase/firestore/testutil/async_testing.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "Firestore/core/test/firebase/firestore/util/create_noop_connectivity_monitor.h"
 #include "Firestore/core/test/firebase/firestore/util/fake_credentials_provider.h"
 #include "Firestore/core/test/firebase/firestore/util/grpc_stream_tester.h"
@@ -247,6 +248,8 @@ TEST_F(StreamTest, CanStopTwice) {
 // Incorrect usage of the interface
 
 TEST_F(StreamTest, CannotStartTwice) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   worker_queue->EnqueueBlocking([&] {
     EXPECT_NO_THROW(firestore_stream->Start());
     EXPECT_ANY_THROW(firestore_stream->Start());
@@ -254,6 +257,8 @@ TEST_F(StreamTest, CannotStartTwice) {
 }
 
 TEST_F(StreamTest, CannotWriteBeforeOpen) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   worker_queue->EnqueueBlocking([&] {
     EXPECT_ANY_THROW(firestore_stream->WriteEmptyBuffer());
     firestore_stream->Start();

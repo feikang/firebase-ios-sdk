@@ -20,6 +20,7 @@
 #include <string>
 #include <vector>
 
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -96,6 +97,8 @@ TEST(ResourcePath, Parsing) {
 }
 
 TEST(ResourcePath, ParseFailures) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   ASSERT_ANY_THROW(ResourcePath::FromString("//"));
   ASSERT_ANY_THROW(ResourcePath::FromString("foo//bar"));
 }

@@ -26,6 +26,7 @@
 #include "Firestore/core/src/firebase/firestore/util/statusor.h"
 #include "Firestore/core/src/firebase/firestore/util/string_apple.h"
 #include "Firestore/core/test/firebase/firestore/testutil/app_testing.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 
 #include "gtest/gtest.h"
 
@@ -73,6 +74,8 @@ namespace auth {
 // Simulates the case where Firebase/Firestore is installed in the project but
 // Firebase/Auth is not available.
 TEST(FirebaseCredentialsProviderTest, GetTokenNoProvider) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   auto token_promise = std::make_shared<std::promise<Token>>();
 
   FIRApp* app = testutil::AppForUnitTesting();
@@ -97,6 +100,8 @@ TEST(FirebaseCredentialsProviderTest, GetTokenNoProvider) {
 }
 
 TEST(FirebaseCredentialsProviderTest, GetTokenUnauthenticated) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   FIRApp* app = testutil::AppForUnitTesting();
   FSTAuthFake* auth = [[FSTAuthFake alloc] initWithToken:nil uid:nil];
   FirebaseCredentialsProvider credentials_provider(app, auth);

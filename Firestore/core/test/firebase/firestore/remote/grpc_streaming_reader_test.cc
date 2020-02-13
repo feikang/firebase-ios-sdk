@@ -23,6 +23,7 @@
 #include "Firestore/core/src/firebase/firestore/util/status.h"
 #include "Firestore/core/src/firebase/firestore/util/statusor.h"
 #include "Firestore/core/test/firebase/firestore/testutil/async_testing.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "Firestore/core/test/firebase/firestore/util/create_noop_connectivity_monitor.h"
 #include "Firestore/core/test/firebase/firestore/util/grpc_stream_tester.h"
 #include "absl/types/optional.h"
@@ -138,6 +139,8 @@ TEST_F(GrpcStreamingReaderTest, CanGetResponseHeadersAfterFinishing) {
 // Method prerequisites -- incorrect usage
 
 TEST_F(GrpcStreamingReaderTest, CannotFinishAndNotifyBeforeStarting) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   // No callback has been assigned.
   worker_queue->EnqueueBlocking(
       [&] { EXPECT_ANY_THROW(reader->FinishAndNotify(Status::OK())); });

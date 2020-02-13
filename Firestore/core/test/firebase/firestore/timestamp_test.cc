@@ -22,6 +22,7 @@
 #include <vector>
 
 #include "Firestore/core/src/firebase/firestore/util/warnings.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 SUPPRESS_COMMA_WARNINGS_BEGIN()
@@ -32,6 +33,8 @@ SUPPRESS_END()
 namespace firebase {
 
 namespace {
+
+namespace testutil = firestore::testutil;
 
 using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
 using Sec = std::chrono::seconds;
@@ -275,6 +278,8 @@ TEST(Timestamp, Comparison) {
 }
 
 TEST(Timestamp, InvalidArguments) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   // Negative nanoseconds.
   ASSERT_ANY_THROW(Timestamp(0, -1));
   ASSERT_ANY_THROW(Timestamp(100, -1));
@@ -289,6 +294,8 @@ TEST(Timestamp, InvalidArguments) {
 }
 
 TEST(Timestamp, InvalidArgumentsChrono) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   // Make sure Timestamp doesn't accept values beyond the supported range, if
   // system clock-based time_point on this platform can represent values this
   // large.

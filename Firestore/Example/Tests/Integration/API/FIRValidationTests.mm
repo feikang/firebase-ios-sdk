@@ -28,8 +28,11 @@
 #import "Firestore/Example/Tests/Util/FSTHelpers.h"
 #import "Firestore/Example/Tests/Util/FSTIntegrationTestCase.h"
 
+#include "Firestore/core/src/firebase/firestore/util/exception_apple.h"
 #include "Firestore/core/test/firebase/firestore/testutil/app_testing.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 
+namespace util = firebase::firestore::util;
 namespace testutil = firebase::firestore::testutil;
 
 // We have tests for passing nil when nil is not supposed to be allowed. So suppress the warnings.
@@ -43,6 +46,8 @@ namespace testutil = firebase::firestore::testutil;
 #pragma mark - FIRFirestoreSettings Validation
 
 - (void)testNilHostFails {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRFirestoreSettings *settings = self.db.settings;
   FSTAssertThrows(settings.host = nil,
                   @"Host setting may not be nil. You should generally just use the default value "
@@ -50,6 +55,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testNilDispatchQueueFails {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRFirestoreSettings *settings = self.db.settings;
   FSTAssertThrows(settings.dispatchQueue = nil,
                   @"Dispatch queue setting may not be nil. Create a new dispatch queue with "
@@ -58,6 +65,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testChangingSettingsAfterUseFails {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRFirestoreSettings *settings = self.db.settings;
   [[self.db documentWithPath:@"foo/bar"] setData:@{@"a" : @42}];
   settings.host = @"example.com";
@@ -70,6 +79,8 @@ namespace testutil = firebase::firestore::testutil;
 #pragma mark - FIRFirestore Validation
 
 - (void)testNilFIRAppFails {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FSTAssertThrows(
       [FIRFirestore firestoreForApp:nil],
       @"FirebaseApp instance may not be nil. Use FirebaseApp.app() if you'd like to use the "
@@ -77,6 +88,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testNilProjectIDFails {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIROptions *options = testutil::OptionsForUnitTesting("ignored");
   options.projectID = nil;
   FIRApp *app = testutil::AppForUnitTesting(options);
@@ -87,6 +100,8 @@ namespace testutil = firebase::firestore::testutil;
 // TODO(b/62410906): Test for firestoreForApp:database: with nil DatabaseID.
 
 - (void)testNilTransactionBlocksFail {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FSTAssertThrows([self.db runTransactionWithBlock:nil
                                         completion:^(id result, NSError *error) {
                                           XCTFail(@"Completion shouldn't run.");
@@ -105,6 +120,8 @@ namespace testutil = firebase::firestore::testutil;
 #pragma mark - Collection and Document Path Validation
 
 - (void)testNilCollectionPathsFail {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRDocumentReference *baseDocRef = [self.db documentWithPath:@"foo/bar"];
   NSString *nilError = @"Collection path cannot be nil.";
   FSTAssertThrows([self.db collectionWithPath:nil], nilError);
@@ -112,6 +129,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testWrongLengthCollectionPathsFail {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRDocumentReference *baseDocRef = [self.db documentWithPath:@"foo/bar"];
   NSArray *badAbsolutePaths = @[ @"foo/bar", @"foo/bar/baz/quu" ];
   NSArray *badRelativePaths = @[ @"", @"baz/quu" ];
@@ -127,6 +146,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testNilDocumentPathsFail {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRCollectionReference *baseCollectionRef = [self.db collectionWithPath:@"foo"];
   NSString *nilError = @"Document path cannot be nil.";
   FSTAssertThrows([self.db documentWithPath:nil], nilError);
@@ -134,6 +155,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testWrongLengthDocumentPathsFail {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRCollectionReference *baseCollectionRef = [self.db collectionWithPath:@"foo"];
   NSArray *badAbsolutePaths = @[ @"foo", @"foo/bar/baz" ];
   NSArray *badRelativePaths = @[ @"", @"bar/baz" ];
@@ -149,6 +172,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testPathsWithEmptySegmentsFail {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   // We're only testing using collectionWithPath since the validation happens in BasePath which is
   // shared by all methods that accept paths.
 
@@ -784,6 +809,8 @@ namespace testutil = firebase::firestore::testutil;
     toFailWithReason:(NSString *)reason
          includeSets:(BOOL)includeSets
       includeUpdates:(BOOL)includeUpdates {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   FIRDocumentReference *ref = [self documentRef];
   if (includeSets) {
     FSTAssertThrows([ref setData:data], reason, @"for %@", data);
@@ -816,6 +843,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)testFieldNamesMustNotBeEmpty {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   NSString *reason = @"Invalid field path. Provided names must not be empty.";
   FSTAssertThrows([[FIRFieldPath alloc] initWithFields:@[]], reason);
 
@@ -831,6 +860,8 @@ namespace testutil = firebase::firestore::testutil;
  * specified reason.
  */
 - (void)expectFieldPath:(NSString *)fieldPath toFailWithReason:(NSString *)reason {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   // Get an arbitrary snapshot we can use for testing.
   FIRDocumentReference *docRef = [self documentRef];
   [self writeDocumentRef:docRef data:@{@"test" : @1}];
@@ -852,6 +883,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)verifyExceptionForInvalidLatitude:(double)latitude {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   NSString *reason = [NSString
       stringWithFormat:@"GeoPoint requires a latitude value in the range of [-90, 90], but was %g",
                        latitude];
@@ -859,6 +892,8 @@ namespace testutil = firebase::firestore::testutil;
 }
 
 - (void)verifyExceptionForInvalidLongitude:(double)longitude {
+  testutil::RestoreDefaultThrowHandler restore(util::ObjcThrowHandler);
+
   NSString *reason =
       [NSString stringWithFormat:
                     @"GeoPoint requires a longitude value in the range of [-180, 180], but was %g",

@@ -19,6 +19,7 @@
 #include <memory>
 
 #include "Firestore/core/src/firebase/firestore/util/executor_libdispatch.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "absl/memory/memory.h"
 #include "gtest/gtest.h"
 
@@ -72,6 +73,8 @@ TEST_F(AsyncQueueTestLibdispatchOnly, SameQueueIsAllowedForUnownedActions) {
 
 TEST_F(AsyncQueueTestLibdispatchOnly,
        VerifyIsCurrentQueueRequiresOperationInProgress) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   internal::DispatchSync(underlying_queue, [this] {
     EXPECT_ANY_THROW(queue->VerifyIsCurrentQueue());
   });
@@ -79,6 +82,8 @@ TEST_F(AsyncQueueTestLibdispatchOnly,
 
 TEST_F(AsyncQueueTestLibdispatchOnly,
        VerifyIsCurrentQueueRequiresBeingCalledOnTheQueue) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   ASSERT_NE(underlying_queue, dispatch_get_main_queue());
   EXPECT_ANY_THROW(queue->VerifyIsCurrentQueue());
 }

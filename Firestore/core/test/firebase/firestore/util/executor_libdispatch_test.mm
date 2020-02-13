@@ -20,6 +20,7 @@
 
 #include "Firestore/core/src/firebase/firestore/util/executor_libdispatch.h"
 #include "Firestore/core/test/firebase/firestore/testutil/async_testing.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "absl/memory/memory.h"
 #include "gtest/gtest.h"
 
@@ -68,6 +69,9 @@ TEST_F(ExecutorLibdispatchOnlyTests,
        ExecuteBlockingOnTheCurrentQueueIsNotAllowed) {
   Expectation ran;
   EXPECT_NO_THROW(executor->ExecuteBlocking([] {}));
+
+  testutil::RestoreDefaultThrowHandler restore;
+
   executor->Execute([&] {
     EXPECT_ANY_THROW(executor->ExecuteBlocking([] {}));
     ran.Fulfill();

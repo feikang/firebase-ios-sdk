@@ -22,6 +22,7 @@
 #include "Firestore/core/src/firebase/firestore/model/document_key.h"
 #include "Firestore/core/src/firebase/firestore/model/resource_path.h"
 #include "Firestore/core/src/firebase/firestore/util/comparison.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "Firestore/core/test/firebase/firestore/testutil/testutil.h"
 #include "gtest/gtest.h"
 
@@ -99,6 +100,8 @@ TEST(DocumentKey, Constructor_StaticFactory) {
 }
 
 TEST(DocumentKey, Constructor_BadArguments) {
+  testutil::RestoreDefaultThrowHandler restore;
+
   ASSERT_ANY_THROW(DocumentKey(ResourcePath{"foo"}));
   ASSERT_ANY_THROW(DocumentKey(ResourcePath{"foo", "bar", "baz"}));
 

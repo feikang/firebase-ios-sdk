@@ -20,6 +20,7 @@
 #include <limits>
 
 #include "Firestore/core/src/firebase/firestore/util/secure_random.h"
+#include "Firestore/core/test/firebase/firestore/testutil/debugger.h"
 #include "gtest/gtest.h"
 
 namespace firebase {
@@ -338,6 +339,7 @@ TEST(OrderedCodeInvalidEncodingsTest, NonCanonical) {
   // and thus should be avoided to not mess up the string ordering of
   // encodings.
 
+  testutil::RestoreDefaultThrowHandler restore;
   SecureRandom rnd;
 
   for (int n = 2; n <= 9; ++n) {

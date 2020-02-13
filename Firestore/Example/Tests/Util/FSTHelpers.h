@@ -155,4 +155,10 @@ model::TransformMutation FSTTestTransformMutation(NSString *path,
 /** Creates a delete mutation for the document key at the given path. */
 model::DeleteMutation FSTTestDeleteMutation(NSString *path);
 
+/**
+ * An Objective-C class that registers the DebugThrowHandler.
+ */
+@interface FSTDebugThrowHandlerHelper : NSObject
+@end
+
 NS_ASSUME_NONNULL_END
