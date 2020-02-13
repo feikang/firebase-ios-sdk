@@ -99,7 +99,7 @@ GrpcStream::GrpcStream(
 
 GrpcStream::~GrpcStream() {
   LOG_DEBUG("GrpcStream('%s'): destroying stream", this);
-  HARD_ASSERT(completions_.empty(),
+  HARD_ASSERT_NOTHROW(completions_.empty(),
               "GrpcStream is being destroyed without proper shutdown");
   MaybeUnregister();
 }
