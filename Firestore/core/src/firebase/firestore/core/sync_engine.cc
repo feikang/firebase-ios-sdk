@@ -113,23 +113,21 @@ ViewSnapshot SyncEngine::InitializeViewAndComputeSnapshot(const Query& query,
   QueryResult query_result =
       local_store_->ExecuteQuery(query, /* use_previous_results= */ true);
 
+  View view(query, query_result.remote_keys());
+
   // If there are already queries mapped to the target id, create a synthesized
   // target change to apply the sync state from those queries to the new query.
-  auto current_sync_state = SyncState::None;
-  absl::optional<TargetChange> synthesized_current_change;
   if (queries_by_target_.find(target_id) != queries_by_target_.end()) {
     const Query& mirror_query = queries_by_target_[target_id][0];
-    current_sync_state =
-        query_views_by_query_[mirror_query]->view().sync_state();
-    synthesized_current_change = TargetChange::CreateSynthesizedTargetChange(
-        current_sync_state == SyncState::Synced);
+    const View& mirror_view = query_views_by_query_[mirror_query]->view();
+
+    view = View::CreateFromMirrorView(query, mirror_view);
   }
 
-  View view(query, query_result.remote_keys());
   ViewDocumentChanges view_doc_changes =
       view.ComputeDocumentChanges(query_result.documents().underlying_map());
   ViewChange view_change =
-      view.ApplyChanges(view_doc_changes, synthesized_current_change);
+      view.ApplyChanges(view_doc_changes, absl::nullopt);
   HARD_ASSERT(view_change.limbo_changes().empty(),
               "View returned limbo docs before target ack from the server.");
 

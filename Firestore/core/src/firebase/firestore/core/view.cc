@@ -324,6 +324,18 @@ ViewChange View::ApplyOnlineStateChange(OnlineState online_state) {
   }
 }
 
+View View::CreateFromMirrorView(Query query, const View& mirror_view) {
+  View result(std::move(query), mirror_view.synced_documents());
+
+  // Don't copy the document_set_, sync_state_, or current_: these will be
+  // populated by ApplyChanges.
+
+  result.limbo_documents_ = mirror_view.limbo_documents_;
+  result.mutated_keys_ = mirror_view.mutated_keys_;
+
+  return result;
+}
+
 // MARK: Private Methods
 
 /** Returns whether the doc for the given key should be in limbo. */

@@ -188,6 +188,11 @@ class View {
    */
   core::ViewChange ApplyOnlineStateChange(model::OnlineState online_state);
 
+  /**
+   * Creates a view from a mirror query.
+   */
+  static View CreateFromMirrorView(Query query, const View& mirror_view);
+
   core::SyncState sync_state() const {
     return sync_state_;
   }
