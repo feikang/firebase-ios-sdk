@@ -111,7 +111,7 @@
   XCTAssertEqualObjects(FIRQuerySnapshotGetData(snapshot), expected);
 
   // Add a document that would change the result set.
-  [self addDocumentRef:collRef data:@{@"k" : @"e", @"sort" : @-1}];
+  [self writeDocumentRef:[collRef documentWithPath:@"e"] data:@{@"k" : @"e", @"sort" : @-1}];
 
   // Verify both queries get expected result.
   snapshot = [limitAccumulator awaitEventWithName:@"Snapshot"];
